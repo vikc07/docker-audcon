@@ -1,4 +1,4 @@
-FROM vikramchauhan/ffmpeg:debian as ffmpeg
+FROM vikramchauhan/ffmpeg:latest as ffmpeg
 
 FROM python:3-slim
 MAINTAINER Vikram Chauhan <me@vkrm.ch>
@@ -6,7 +6,8 @@ MAINTAINER Vikram Chauhan <me@vkrm.ch>
 ARG LD_LIBRARY_PATH="/ffmpeg/lib"
 ARG DEPS="ca-certificates \
         wget \
-        unzip"
+        unzip\
+        git"
 ARG FFMPEG_DIR="/ffmpeg"
 ARG AUDCON_DIR="/audcon"
 ARG RUN_USER=audcon
@@ -43,9 +44,11 @@ RUN groupadd -g $RUN_GID $RUN_GROUP \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir /temp \
     && chown -R $RUN_USER:$RUN_GROUP $AUDCON_DIR \
-    && chown -R $RUN_USER:$RUN_GROUP /temp
+    && chmod -R 755 $AUDCON_DIR \
+    && chown -R $RUN_USER:$RUN_GROUP /temp \
+    && cp -p $AUDCON_DIR/run.sh /
 
 USER $RUN_USER
 
 # Set entrypoint
-ENTRYPOINT ["$AUDCON_DIR/run.sh"]
+ENTRYPOINT ["/run.sh"]
