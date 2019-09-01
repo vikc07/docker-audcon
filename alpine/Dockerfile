@@ -49,4 +49,4 @@ RUN addgroup -g $RUN_GID $RUN_GROUP \
 USER $RUN_USER
 
 # Set entrypoint
-ENTRYPOINT ["/run.sh"]
+ENTRYPOINT ["/run_alpine.sh"]
