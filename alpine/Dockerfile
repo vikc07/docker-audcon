@@ -6,11 +6,11 @@ MAINTAINER Vikram Chauhan <me@vkrm.ch>
 
 ARG AUDCON_DIR="/audcon"
 ARG FFMPEG_DIR="/ffmpeg"
-ARG RUN_USER=ffmpeg
-ARG RUN_GROUP=ffmpeg
+ARG RUN_USER=audcon
+ARG RUN_GROUP=audcon
 ARG RUN_UID=5555
 ARG RUN_GID=5555
-ARG RUN_PASS=ffmpeg123@
+ARG RUN_PASS=audcon123@
 
 ENV AUDCON_DIR=${AUDCON_DIR} \
     FFMPEG_DIR=${FFMPEG_DIR} \
@@ -44,9 +44,9 @@ RUN addgroup -g $RUN_GID $RUN_GROUP \
     && chown -R $RUN_USER:$RUN_GROUP $AUDCON_DIR \
     && chmod -R 755 $AUDCON_DIR \
     && chown -R $RUN_USER:$RUN_GROUP /temp \
-    && cp -p $AUDCON_DIR/run.sh /
+    && cp -p $AUDCON_DIR/run_alpine.sh /run.sh
 
 USER $RUN_USER
 
 # Set entrypoint
-ENTRYPOINT ["/run_alpine.sh"]
+ENTRYPOINT ["/run.sh"]
