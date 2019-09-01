@@ -1,7 +1,7 @@
 # make sure python and ffmpeg are on same debian version
-FROM vikramchauhan/ffmpeg:debian as ffmpeg
+FROM vikramchauhan/ffmpeg:alpine as ffmpeg
 
-FROM python:3-slim
+FROM python:3-alpine
 MAINTAINER Vikram Chauhan <me@vkrm.ch>
 
 ARG AUDCON_DIR="/audcon"
@@ -28,23 +28,18 @@ ARG DEPS="ca-certificates \
         unzip\
         git"
 
-RUN groupadd -g $RUN_GID ${RUN_GROUP} \
-    && useradd -m $RUN_GROUP -g $RUN_USER -u $RUN_UID -p $RUN_PASS \
-    && chown -R $RUN_USER:$RUN_GROUP $FFMPEG_DIR \
+RUN addgroup -g $RUN_GID $RUN_GROUP \
+    && adduser -G $RUN_GROUP -u $RUN_UID -D $RUN_USER \
     && chmod -R 755 $FFMPEG_DIR \
-    && apt-get -y update \
-    && apt-get -y install --no-install-recommends ${DEPS} \
+    && apk add --no-cache --update ${DEPS}\
     && cd / \
     && wget https://github.com/vikc07/audcon/archive/master.zip \
     && unzip master.zip \
     && mv audcon-master $AUDCON_DIR \
     && rm master.zip \
     && pip install -r $AUDCON_DIR/requirements.txt \
-    && apt-get -y remove ${DEPS} \
-    && apt-get -y clean \
-    && apt-get -y autoclean \
-    && apt-get -y autoremove \
-    && rm -rf /var/lib/apt/lists/* \
+    && apk del ${DEPS} \
+    && rm -rf /var/cache/apk/* \
     && mkdir /temp \
     && chown -R $RUN_USER:$RUN_GROUP $AUDCON_DIR \
     && chmod -R 755 $AUDCON_DIR \
